@@ -4,6 +4,7 @@ import { Network } from '../util/types';
 
 export const ERC20_APP_BASE_PATH = '/erc20';
 export const ERC721_APP_BASE_PATH = '/erc721';
+export const STEADY_APP_BASE_PATH = '/steady';
 export const DEFAULT_BASE_PATH = process.env.REACT_APP_DEFAULT_BASE_PATH || ERC20_APP_BASE_PATH;
 
 export const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhost:3000/v3';
@@ -98,3 +99,9 @@ export const CHAIN_ID: number = process.env.REACT_APP_CHAIN_ID
     : NETWORK_ID;
 
 export const NETWORK_NAME: string = Network[NETWORK_ID];
+
+export const QR_CODE_SIZE: number = 120;
+
+export const WITHDRAW_ADDRESS: string = '0xdB25001A52E2F44E87F21dfb7FdA4656B84843a6';
+
+export const BITPIE_BASE_URL: string = 'https://ethex.bitpie.songchenwen.com:4430/api/v1';

@@ -5,6 +5,7 @@ interface Window {
 }
 
 declare module 'react-copy-to-clipboard';
+declare module 'wallet-address-validator';
 declare module 'react-tooltip';
 declare module '*.json' {
     const value: any;

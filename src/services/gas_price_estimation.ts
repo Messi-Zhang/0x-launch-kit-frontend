@@ -18,8 +18,6 @@ interface EthGasStationResult {
     safeLow: number;
 }
 
-const logger = getLogger('gas_price_estimation');
-
 const ETH_GAS_STATION_API_BASE_URL = 'https://ethgasstation.info';
 
 export const getGasEstimationInfoAsync = async (): Promise<GasInfo> => {
@@ -35,7 +33,6 @@ export const getGasEstimationInfoAsync = async (): Promise<GasInfo> => {
         gasPriceInWei: DEFAULT_GAS_PRICE,
         estimatedTimeMs: DEFAULT_ESTIMATED_TRANSACTION_TIME_MS,
     };
-    logger.info(info);
     return info;
 };
 

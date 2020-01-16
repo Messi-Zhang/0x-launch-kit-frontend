@@ -45,6 +45,14 @@ const StyledButton = styled.button<{ variant?: ButtonVariant }>`
         props.variant && props.variant === ButtonVariant.Buy
             ? `background-color: ${props.theme.componentsTheme.buttonBuyBackgroundColor};`
             : ''}
+    ${props =>
+        props.variant && props.variant === ButtonVariant.Deposit
+            ? `background-color: ${props.theme.componentsTheme.buttonDepositBackgroundColor};`
+            : ''}      
+    ${props =>
+        props.variant && props.variant === ButtonVariant.Withdraw
+            ? `background-color: ${props.theme.componentsTheme.buttonWithdrawBackgroundColor};`
+            : ''}
 
     align-items: center;
     border-radius: ${themeDimensions.borderRadius};

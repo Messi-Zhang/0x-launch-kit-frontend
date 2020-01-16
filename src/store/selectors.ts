@@ -2,7 +2,7 @@ import { OrderStatus } from '@0x/types';
 import { BigNumber } from '@0x/utils';
 import { createSelector } from 'reselect';
 
-import { ERC20_APP_BASE_PATH, ZERO } from '../common/constants';
+import { ERC721_APP_BASE_PATH, ZERO } from '../common/constants';
 import { isWeth } from '../util/known_tokens';
 import {
     Collectible,
@@ -14,11 +14,13 @@ import {
     Token,
     TokenBalance,
     Web3State,
+    SteadyState,
 } from '../util/types';
 import { mergeByPrice } from '../util/ui_orders';
 
 export const getEthAccount = (state: StoreState) => state.blockchain.ethAccount;
 export const getTokenBalances = (state: StoreState) => state.blockchain.tokenBalances;
+export const getSteadyTokenBalances = (state: StoreState) => state.blockchain.steadyTokenBalances;
 export const getWeb3State = (state: StoreState) => state.blockchain.web3State;
 export const getEthBalance = (state: StoreState) => state.blockchain.ethBalance;
 export const getWethTokenBalance = (state: StoreState) => state.blockchain.wethTokenBalance;
@@ -48,10 +50,12 @@ export const getCollectibleById = (state: StoreState, props: { collectibleId: st
 export const getSelectedCollectible = (state: StoreState) => state.collectibles.collectibleSelected;
 export const getCurrentRoutePath = (state: StoreState) => state.router.location.pathname;
 export const getRouterLocationSearch = (state: StoreState) => state.router.location.search;
+export const getSteadyCurrentToken = (state: StoreState) => state.steady.currentToken;
+export const getDepositAddresses = (state: StoreState) => state.steady.addresses;
 
 export const getCurrentMarketPlace = createSelector(
     getCurrentRoutePath,
-    (currentRoute: string) => (currentRoute.includes(ERC20_APP_BASE_PATH) ? MARKETPLACES.ERC20 : MARKETPLACES.ERC721),
+    (currentRoute: string) => (currentRoute.includes(ERC721_APP_BASE_PATH) ? MARKETPLACES.ERC721 : MARKETPLACES.ERC20),
 );
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
@@ -184,6 +188,16 @@ export const getTokens = createSelector(
     (tokenBalances): Token[] => {
         return tokenBalances.map((tokenBalance, index) => {
             const { token } = tokenBalance;
+            return token;
+        });
+    },
+);
+
+export const getSteadyTokens = createSelector(
+    getSteadyTokenBalances,
+    (steadyTokenBalances): Token[] => {
+        return steadyTokenBalances.map((steadyTokenBalances, index) => {
+            const { token } = steadyTokenBalances;
             return token;
         });
     },

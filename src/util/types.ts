@@ -6,6 +6,7 @@ import { ActionCreator, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { TokenMetaData } from '../common/tokens_meta_data';
+import { TokenSteadyData } from '../common/tokens_steady_data';
 import { ExtraArgument } from '../store/index';
 import { ThemeModalStyle, ThemeProperties } from '../themes/commons';
 
@@ -63,6 +64,7 @@ export interface BlockchainState {
     readonly ethAccount: string;
     readonly web3State: Web3State;
     readonly tokenBalances: TokenBalance[];
+    readonly steadyTokenBalances: TokenBalance[];
     readonly ethBalance: BigNumber;
     readonly wethTokenBalance: TokenBalance | null;
     readonly gasInfo: GasInfo;
@@ -90,6 +92,11 @@ export interface MarketState {
     readonly makerAddresses: string[] | null;
 }
 
+export interface SteadyState {
+    readonly currentToken: Token | null;
+    readonly addresses: Address[] | null;
+}
+
 export interface StoreState {
     readonly router: RouterState;
     readonly blockchain: BlockchainState;
@@ -97,6 +104,7 @@ export interface StoreState {
     readonly ui: UIState;
     readonly market: MarketState;
     readonly collectibles: CollectiblesState;
+    readonly steady: SteadyState;
 }
 
 export enum StepKind {
@@ -179,6 +187,11 @@ export enum OrderSide {
     Buy,
 }
 
+export enum SteadySide {
+    Deposit,
+    Withdraw,
+}
+
 export interface UIOrder {
     rawOrder: SignedOrder;
     side: OrderSide;
@@ -213,6 +226,11 @@ export interface CurrencyPair {
 export interface Market {
     currencyPair: CurrencyPair;
     price: BigNumber | null;
+}
+
+export interface Address {
+    coinCode: string;
+    address: string;
 }
 
 export enum NotificationKind {
@@ -325,6 +343,8 @@ export enum ButtonVariant {
     Secondary = 'secondary',
     Sell = 'sell',
     Tertiary = 'tertiary',
+    Deposit = 'deposit',
+    Withdraw = 'withdraw',
 }
 
 export enum ButtonIcons {
@@ -352,4 +372,10 @@ export interface ConfigFile {
     marketFilters?: Filter[];
     theme?: PartialTheme;
     general?: GeneralConfig;
+    steadyTokens: TokenSteadyData[];
+}
+
+export interface AbiFile {
+    contractName: string;
+    abi: any[];
 }

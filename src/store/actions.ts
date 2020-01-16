@@ -1,10 +1,11 @@
 import { getWeb3Wrapper } from '../services/web3_wrapper';
-import { getKnownTokens } from '../util/known_tokens';
+import { getKnownTokens, getKnownSteadyTokens } from '../util/known_tokens';
 import { MARKETPLACES } from '../util/types';
 
-import { updateGasInfo, updateTokenBalances } from './blockchain/actions';
+import { updateGasInfo, updateTokenBalances, updateSteadyTokenBalances } from './blockchain/actions';
 import { getAllCollectibles } from './collectibles/actions';
 import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from './market/actions';
+import { fetchDepositAddress } from './steady/actions';
 import { getOrderBook, getOrderbookAndUserOrders } from './relayer/actions';
 import { getCurrencyPair, getCurrentMarketPlace } from './selectors';
 
@@ -15,6 +16,7 @@ export * from './router/actions';
 export * from './ui/actions';
 export * from './market/actions';
 export * from './collectibles/actions';
+export * from './steady/actions';
 
 export const updateStore = () => {
     return async (dispatch: any, getState: any) => {
@@ -22,6 +24,7 @@ export const updateStore = () => {
         const web3Wrapper = await getWeb3Wrapper();
         const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
         dispatch(updateTokenBalances());
+        dispatch(updateSteadyTokenBalances());
         dispatch(updateGasInfo());
         dispatch(updateMarketPriceEther());
 
@@ -49,15 +52,18 @@ export const updateERC20Store = (ethAccount: string) => {
             const currencyPair = getCurrencyPair(state);
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+            const knownSteadyTokens = getKnownSteadyTokens()
 
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderbookAndUserOrders());
             await dispatch(fetchMarkets());
+            await dispatch(fetchDepositAddress());
         } catch (error) {
             const knownTokens = getKnownTokens();
             const currencyPair = getCurrencyPair(state);
             const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
             const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+            const knownSteadyTokens = getKnownSteadyTokens()
 
             dispatch(setMarketTokens({ baseToken, quoteToken }));
             dispatch(getOrderBook());

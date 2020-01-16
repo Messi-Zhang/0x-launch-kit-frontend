@@ -13,6 +13,7 @@ export interface ThemeProperties {
     buttonConvertBackgroundColor: string;
     buttonConvertBorderColor: string;
     buttonConvertTextColor: string;
+    buttonDepositBackgroundColor: string;
     buttonErrorBackgroundColor: string;
     buttonPrimaryBackgroundColor: string;
     buttonQuaternaryBackgroundColor: string;
@@ -20,6 +21,7 @@ export interface ThemeProperties {
     buttonSellBackgroundColor: string;
     buttonTertiaryBackgroundColor: string;
     buttonTextColor: string;
+    buttonWithdrawBackgroundColor: string;
     cardImageBackgroundColor: string;
     cardBackgroundColor: string;
     cardBorderColor: string;

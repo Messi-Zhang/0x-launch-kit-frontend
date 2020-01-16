@@ -2,20 +2,28 @@ import { ExchangeFillEventArgs, LogWithDecodedArgs } from '@0x/contract-wrappers
 import { assetDataUtils } from '@0x/order-utils';
 
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
+import { KNOWN_TOKENS_STEADY_DATA, TokenSteadyData } from '../common/tokens_steady_data';
 import { getLogger } from '../util/logger';
 
 import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
+import { getWethTokenFromTokensSteadyDataByNetworkId, mapTokensSteadyDataToTokenByNetworkId } from './token_steady_data';
 import { Token } from './types';
 
 const logger = getLogger('Tokens::known_tokens .ts');
 
 export class KnownTokens {
     private readonly _tokens: Token[] = [];
+    private readonly _steadyTokens: Token[] = [];
     private readonly _wethToken: Token;
 
-    constructor(knownTokensMetadata: TokenMetaData[]) {
-        this._tokens = mapTokensMetaDataToTokenByNetworkId(knownTokensMetadata).filter(token => !isWeth(token.symbol));
-        this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(knownTokensMetadata);
+    constructor(knownTokensData: TokenSteadyData[] | TokenMetaData[], isSteady: Boolean = false) {
+        if (isSteady) {
+            this._steadyTokens = mapTokensSteadyDataToTokenByNetworkId(knownTokensData).filter(token => !isWeth(token.symbol));
+            this._wethToken = getWethTokenFromTokensSteadyDataByNetworkId(knownTokensData);
+        } else {
+            this._tokens = mapTokensMetaDataToTokenByNetworkId(knownTokensData).filter(token => !isWeth(token.symbol));
+            this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(knownTokensData);
+        }
     }
 
     public getTokenBySymbol = (symbol: string): Token => {
@@ -90,14 +98,30 @@ export class KnownTokens {
     public getTokens = (): Token[] => {
         return this._tokens;
     };
+
+    public getSteadyTokens = (): Token[] => {
+        return this._steadyTokens;
+    };
+
+    public getSteadyDefaultToken = (): Token => {
+        return this._steadyTokens[0];
+    };
 }
 
 let knownTokens: KnownTokens;
 export const getKnownTokens = (knownTokensMetadata: TokenMetaData[] = KNOWN_TOKENS_META_DATA): KnownTokens => {
     if (!knownTokens) {
-        knownTokens = new KnownTokens(knownTokensMetadata);
+        knownTokens = new KnownTokens(knownTokensMetadata, false);
     }
     return knownTokens;
+};
+
+let knownSteadyTokens: KnownTokens;
+export const getKnownSteadyTokens = (knownTokensSteadydata: TokenSteadyData[] = KNOWN_TOKENS_STEADY_DATA): KnownTokens => {
+    if (!knownSteadyTokens) {
+        knownSteadyTokens = new KnownTokens(knownTokensSteadydata, true);
+    }
+    return knownSteadyTokens;
 };
 
 export const getColorBySymbol = (symbol: string): string => {

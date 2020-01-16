@@ -16,6 +16,7 @@ const initialBlockchainState: BlockchainState = {
         estimatedTimeMs: DEFAULT_ESTIMATED_TRANSACTION_TIME_MS,
     },
     convertBalanceState: ConvertBalanceState.Success,
+    steadyTokenBalances: [],
 };
 
 export function blockchain(state: BlockchainState = initialBlockchainState, action: RootAction): BlockchainState {
@@ -26,6 +27,8 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
             return { ...state, web3State: action.payload };
         case getType(actions.setTokenBalances):
             return { ...state, tokenBalances: action.payload };
+        case getType(actions.setSteadyTokenBalances):
+            return { ...state, steadyTokenBalances: action.payload };
         case getType(actions.setWethTokenBalance):
             return { ...state, wethTokenBalance: action.payload };
         case getType(actions.setGasInfo):

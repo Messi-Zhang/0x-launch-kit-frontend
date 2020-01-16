@@ -9,6 +9,9 @@ export enum DropdownPositions {
 
 interface DropdownWrapperBodyProps {
     horizontalPosition?: DropdownPositions;
+    steadyCustomTop?: Boolean;
+    steadyCustomWidth?: Boolean;
+    steadyCustomZIndex?: Boolean;
 }
 
 interface Props extends HTMLAttributes<HTMLDivElement>, DropdownWrapperBodyProps {
@@ -22,13 +25,19 @@ const DropdownWrapper = styled.div`
 `;
 
 const DropdownWrapperHeader = styled.div`
+    width: 100%;
     cursor: pointer;
     position: relative;
 `;
 
 const DropdownWrapperBody = styled.div<DropdownWrapperBodyProps>`
     position: absolute;
-    top: calc(100% + 15px);
+
+    ${props => (props.steadyCustomTop ? 'top: calc(100% - 25px);' : 'top: calc(100% + 15px);')}
+
+    ${props => (props.steadyCustomWidth ? 'width: 100%;' : '')}
+    
+    ${props => (props.steadyCustomZIndex ? 'z-index: 13;' : '')}
 
     ${props => (props.horizontalPosition === DropdownPositions.Left ? 'left: 0;' : '')}
 
@@ -48,13 +57,26 @@ export class Dropdown extends React.Component<Props, State> {
     private _wrapperRef: any;
 
     public render = () => {
-        const { header, body, horizontalPosition = DropdownPositions.Left, ...restProps } = this.props;
+        const { 
+            header, 
+            body, 
+            horizontalPosition = DropdownPositions.Left, 
+            steadyCustomTop = false, 
+            steadyCustomWidth = false, 
+            steadyCustomZIndex = false,
+            ...restProps 
+        } = this.props;
 
         return (
             <DropdownWrapper ref={this._setWrapperRef} {...restProps}>
                 <DropdownWrapperHeader onClick={this._toggleDropdown}>{header}</DropdownWrapperHeader>
                 {this.state.isOpen ? (
-                    <DropdownWrapperBody horizontalPosition={horizontalPosition} onClick={this._closeDropdownBody}>
+                    <DropdownWrapperBody 
+                    horizontalPosition={horizontalPosition} 
+                    steadyCustomTop={steadyCustomTop} 
+                    steadyCustomWidth={steadyCustomWidth} 
+                    steadyCustomZIndex={steadyCustomZIndex} 
+                    onClick={this._closeDropdownBody}>
                         {body}
                     </DropdownWrapperBody>
                 ) : null}

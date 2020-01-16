@@ -19,7 +19,7 @@ import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
 import { tokensToTokenBalances, tokenToTokenBalance } from '../../services/tokens';
 import { isMetamaskInstalled } from '../../services/web3_wrapper';
-import { getKnownTokens, isWeth } from '../../util/known_tokens';
+import { getKnownTokens, isWeth, getKnownSteadyTokens } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { buildSellCollectibleOrder } from '../../util/orders';
@@ -38,6 +38,7 @@ import {
 import { getAllCollectibles } from '../collectibles/actions';
 import { fetchMarkets, setMarketTokens, updateMarketPriceEther } from '../market/actions';
 import { getOrderBook, getOrderbookAndUserOrders, initializeRelayerData } from '../relayer/actions';
+import { fetchDepositAddress } from '../steady/actions';
 import {
     getCurrencyPair,
     getCurrentMarketPlace,
@@ -71,6 +72,10 @@ export const setWeb3State = createAction('blockchain/WEB3_STATE_set', resolve =>
 });
 
 export const setTokenBalances = createAction('blockchain/TOKEN_BALANCES_set', resolve => {
+    return (tokenBalances: TokenBalance[]) => resolve(tokenBalances);
+});
+
+export const setSteadyTokenBalances = createAction('blockchain/STEADY_TOKEN_BALANCES_set', resolve => {
     return (tokenBalances: TokenBalance[]) => resolve(tokenBalances);
 });
 
@@ -120,7 +125,6 @@ export const toggleTokenLock: ThunkCreator<Promise<any>> = (token: Token, isUnlo
 export const updateTokenBalancesOnToggleTokenLock: ThunkCreator = (token: Token, isUnlocked: boolean) => {
     return async (dispatch, getState) => {
         const state = getState();
-
         if (isWeth(token.symbol)) {
             const wethTokenBalance = getWethTokenBalance(state) as TokenBalance;
             dispatch(
@@ -187,6 +191,28 @@ export const updateTokenBalances: ThunkCreator<Promise<any>> = (txHash?: string)
         const wethBalance = allTokenBalances.find(b => b.token.symbol === wethToken.symbol);
         const tokenBalances = allTokenBalances.filter(b => b.token.symbol !== wethToken.symbol);
         dispatch(setTokenBalances(tokenBalances));
+
+        const web3Wrapper = await getWeb3Wrapper();
+        const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+        if (wethBalance) {
+            dispatch(setWethBalance(wethBalance.balance));
+        }
+        dispatch(setEthBalance(ethBalance));
+        return ethBalance;
+    };
+};
+
+export const updateSteadyTokenBalances: ThunkCreator<Promise<any>> = (txHash?: string) => {
+    return async (dispatch, getState, { getWeb3Wrapper }) => {
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const knownTokens = getKnownSteadyTokens();
+        const wethToken = knownTokens.getWethToken();
+
+        const allTokenBalances = await tokensToTokenBalances([...knownTokens.getSteadyTokens(), wethToken], ethAccount);
+        const wethBalance = allTokenBalances.find(b => b.token.symbol === wethToken.symbol);
+        const tokenBalances = allTokenBalances.filter(b => b.token.symbol !== wethToken.symbol);
+        dispatch(setSteadyTokenBalances(tokenBalances));
 
         const web3Wrapper = await getWeb3Wrapper();
         const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
@@ -374,6 +400,7 @@ const initWalletERC20: ThunkCreator<Promise<any>> = () => {
 
             try {
                 await dispatch(fetchMarkets());
+                await dispatch(fetchDepositAddress());
                 // For executing this method (setConnectedUserNotifications) is necessary that the setMarkets method is already dispatched, otherwise it wont work (redux-thunk problem), so it's need to be dispatched here
                 // tslint:disable-next-line:no-floating-promises
                 dispatch(setConnectedUserNotifications(ethAccount));
@@ -521,6 +548,7 @@ export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
 
             // tslint:disable-next-line:no-floating-promises
             await dispatch(fetchMarkets());
+            await dispatch(fetchDepositAddress());
         } else {
             // tslint:disable-next-line:no-floating-promises
             dispatch(getAllCollectibles());

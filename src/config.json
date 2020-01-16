@@ -30,25 +30,64 @@
             "displayDecimals": 4
         },
         {
-            "symbol": "ht",
+            "symbol": "btc",
             "name": "0x Protocol Token",
             "primaryColor": "#333333",
             "icon": "assets/icons/zrx.svg",
             "addresses": {
-                "1": "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
-                "42": "0x2103e292bac0e7ba04a49ea6ad5848133004c065"
+                "1": "0xb4447E7B00A7dF516Ed6147709d91E6E9C619Fc5",
+                "42": "0xb4447E7B00A7dF516Ed6147709d91E6E9C619Fc5"
             },
             "decimals": 18,
             "displayDecimals": 4
         }
     ],
     "pairs": [{
-            "base": "ht",
+            "base": "btc",
             "quote": "usdt"
         },
         {
             "base": "weth",
             "quote": "usdt"
+        }
+    ],
+    "steadyTokens": [{
+            "symbol": "weth",
+            "name": "Wrapped Ether",
+            "primaryColor": "#3333ff",
+            "icon": "assets/icons/weth.svg",
+            "addresses": {
+                "1": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                "3": "0xc778417e063141139fce010982780140aa0cd5ab",
+                "4": "0xc778417e063141139fce010982780140aa0cd5ab",
+                "42": "0xd0a1e359811322d97991e03f863a0c30c2cf029c",
+                "50": "0x0b1ba0af832d7c05fd64161e0db78e85978e8082"
+            },
+            "decimals": 18,
+            "displayDecimals": 2
+        }, {
+            "symbol": "BTC",
+            "name": "0x Protocol Token",
+            "primaryColor": "#333333",
+            "icon": "assets/icons/zrx.svg",
+            "addresses": {
+                "1": "0xb4447E7B00A7dF516Ed6147709d91E6E9C619Fc5",
+                "42": "0xb4447E7B00A7dF516Ed6147709d91E6E9C619Fc5"
+            },
+            "decimals": 18,
+            "displayDecimals": 4
+        },
+        {
+            "symbol": "usdt",
+            "name": "0x Protocol Token",
+            "primaryColor": "#335333",
+            "icon": "assets/icons/zrx.svg",
+            "addresses": {
+                "1": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+                "42": "0x5b8c822da1ae23a8adee32c924902b2daecc2844"
+            },
+            "decimals": 6,
+            "displayDecimals": 4
         }
     ],
     "marketFilters": [{

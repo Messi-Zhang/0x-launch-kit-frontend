@@ -11,6 +11,7 @@ import { collectibles } from './collectibles/reducers';
 import { market } from './market/reducers';
 import { relayer } from './relayer/reducers';
 import { ui } from './ui/reducers';
+import { steady } from './steady/reducers';
 
 export type RootAction = ActionType<typeof actions>;
 
@@ -22,4 +23,5 @@ export const createRootReducer = (history: History) =>
         ui,
         market,
         collectibles,
+        steady,
     });
